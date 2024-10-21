@@ -3,12 +3,13 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
+import cors from 'cors';
 
 
 dotenv.config();
 
 mongoose
-    .connect(process.env.MONGODB_URL)
+    .connect(process.env.MONGODB_URL, { serverSelectionTimeoutMS: 20000 })
     .then(() => {
         console.log('Connected to MongoDB');;        
     }).catch((error) => {
@@ -18,6 +19,11 @@ mongoose
 
 
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:5173', 
+}));
+
 
 app.use(express.json());
 
