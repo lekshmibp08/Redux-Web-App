@@ -23,12 +23,14 @@ const SignIn = () => {
     console.log("Form Data:", formData);
     try {
       dispatch(signInStart())
-      const res = await axios.post('/api/auth/signin', formData);
-      dispatch(signInSuccess(res.data)) 
+      const res = await axios.post('/api/auth/signin', formData, {
+        "Content-Type": "application/json",
+      });
+      dispatch(signInSuccess(res)) 
       navigate('/');
           
     } catch (error) {
-      dispatch(signInFailure(error))
+      dispatch(signInFailure(error.response?.data?.message || "Something went wrong!"));
       
     }
 
@@ -37,7 +39,7 @@ const SignIn = () => {
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
-      <p className='text-red-700 mt-5 mb-5 text-center'>{error && 'Invalid Credential!' }</p>
+      <p className='text-red-700 mt-5 mb-5 text-center'>{error ? error.message || 'Something went wrong!' : '' }</p>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         
         <input type="email" placeholder='Email' id='email' 
