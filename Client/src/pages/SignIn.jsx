@@ -27,7 +27,8 @@ const SignIn = () => {
       const res = await axios.post('/api/auth/signin', formData, {
         "Content-Type": "application/json",
       });
-      dispatch(signInSuccess(res)) 
+      
+      dispatch(signInSuccess(res.data)) 
       navigate('/');
           
     } catch (error) {
