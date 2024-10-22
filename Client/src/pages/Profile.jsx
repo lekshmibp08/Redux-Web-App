@@ -52,7 +52,7 @@ const Profile = () => {
           type="file" ref={fileRef} hidden accept="image/*" />
         <img 
           onClick={() => fileRef.current.click()} 
-          src={currentUser?.profilePicture}  
+          src={formData.profilePicture || currentUser?.profilePicture}  
           alt="profile" 
           className="h-24 w-24 self-center cursor-pointer 
           rounded-full object-cover mt-2"
