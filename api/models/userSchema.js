@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    profilePicture: {
+        type: String,
+        default: 'https://www.pngkit.com/png/detail/126-1262807_instagram-default-profile-picture-png.png',
     }
 }, {timestamps: true} );
 
