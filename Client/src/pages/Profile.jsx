@@ -4,7 +4,14 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/
 import {app} from '../firebase'
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { updateUserStart, updateUserSuccess, UpdateUserFailure } from "../redux/user/userSlice";
+import { 
+  updateUserStart, 
+  updateUserSuccess, 
+  UpdateUserFailure, 
+  deleteUserStart, 
+  deleteUserSuccess,
+  deleteUserFailure 
+} from "../redux/user/userSlice";
 
 const Profile = () => {
   const {currentUser, loading, error} = useSelector((state) => state.user);
@@ -66,6 +73,16 @@ const Profile = () => {
       dispatch(UpdateUserFailure(error.response?.data?.message))
     }
   }
+  
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await axios.delete(`/api/user/delete/${currentUser._id}`)
+      dispatch(deleteUserSuccess(res.data));
+    } catch (error) {
+      dispatch(deleteUserFailure(error.response?.data?.message))
+    }
+  }
 
   return (
     <div className="p-3 max-w-lg mx-auto my-auto">
@@ -117,6 +134,7 @@ const Profile = () => {
       </form>
       <div className="flex justify-between mt-5">
         <span 
+          onClick={handleDeleteAccount}
           className="text-red-700 cursor-pointer">
           Delete Account
         </span>
