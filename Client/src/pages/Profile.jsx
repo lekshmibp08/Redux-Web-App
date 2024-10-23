@@ -2,14 +2,20 @@ import { useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import {app} from '../firebase'
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { updateUserStart, updateUserSuccess, UpdateUserFailure } from "../redux/user/userSlice";
 
 const Profile = () => {
-  const {currentUser} = useSelector((state) => state.user);
+  const {currentUser, loading, error} = useSelector((state) => state.user);
   const [image, setImage] = useState(undefined);
   const [imagePercentage, setImagePercentage] = useState(0)
   const [imageError, setImageError] = useState(false);
   const [formData, setFormData] = useState({});
-  const fileRef = useRef(null);    
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+
+  const fileRef = useRef(null); 
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if(image) {
@@ -43,10 +49,28 @@ const Profile = () => {
 
   }
 
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id] : e.target.value })
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await axios.post(`/api/user/update/${currentUser._id}`, formData, {
+        "Content-Type": "application/json",
+      })
+      dispatch(updateUserSuccess(res.data));
+      setUpdateSuccess(true)
+    } catch (error) {
+      dispatch(UpdateUserFailure(error.response?.data?.message))
+    }
+  }
+
   return (
     <div className="p-3 max-w-lg mx-auto my-auto">
       <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-      <form className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input 
           onChange={(e) => setImage(e.target.files[0])}
           type="file" ref={fileRef} hidden accept="image/*" />
@@ -75,16 +99,21 @@ const Profile = () => {
         </p>
 
         <input type="text" id="username" placeholder="Username"
+          onChange={handleChange}
           defaultValue={currentUser.username}
           className="bg-slate-100 rounded-lg p-3" />
         <input type="email" id="email" placeholder="Email"
+          onChange={handleChange}
           defaultValue={currentUser.email}
           className="bg-slate-100 rounded-lg p-3" />
         <input type="password" id="password" placeholder="Password"
+          onChange={handleChange}
           className="bg-slate-100 rounded-lg p-3" />
         <button className="bg-slate-700 text-white
         rounded-lg p-3 uppercase hover:opacity-95 
-        disabled:opacity-50">Update</button>
+        disabled:opacity-50">
+          { loading ? 'Updating...' : 'Update' }
+        </button>
       </form>
       <div className="flex justify-between mt-5">
         <span 
@@ -96,6 +125,12 @@ const Profile = () => {
           Sign Out
         </span>
       </div>
+      <p className="text-red-700 text-center text-sm mt-5">
+        {error && 'Something went wrong!'}
+      </p>
+      <p className="text-green-600 text-center mt-5">
+        {updateSuccess && 'User Updated Successfully!'}
+      </p>
     </div>
   )
 }
