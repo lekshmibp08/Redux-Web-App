@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import userRoutes from './routes/user.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 
 dotenv.config();
@@ -24,8 +25,8 @@ app.use(cors({
     origin: 'http://localhost:5173', 
 }));
 
-
 app.use(express.json());
+app.use(cookieParser());
 
 app.listen(3000, () => {
     console.log(`Server Running on http://localhost:3000`);
