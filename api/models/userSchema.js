@@ -19,7 +19,11 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: 'https://www.pngkit.com/png/detail/126-1262807_instagram-default-profile-picture-png.png',
-    }
+    },
+    isAdmin: { 
+        type: Boolean, 
+        default: false 
+    },
 }, {timestamps: true} );
 
 
