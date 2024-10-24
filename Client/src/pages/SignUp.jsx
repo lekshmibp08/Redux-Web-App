@@ -18,11 +18,10 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate the form data
     const validationErrors = validateFormData(formData);
     
     if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors); // Set errors state if validation fails
+      setErrors(validationErrors); 
       return;
     }
 
@@ -33,13 +32,24 @@ const SignUp = () => {
       navigate('/sign-in');
     } catch (error) {
       setLoading(false);
-      setErrors({ apiError: 'Something went wrong!' });
+      if (error.response && error.response.data) {
+        setErrors({ apiError: error.response.data.message }); // Use the message from the backend
+      } else {
+        setErrors({ apiError: 'Something went wrong!' });
+      }
     }
   };
 
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
+      
+      {errors.apiError && 
+      <p className='text-red-700 mt-5 mb-5 text-center'>
+        {errors.apiError}
+      </p>
+      }
+
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         <input
           type="text"
@@ -82,7 +92,6 @@ const SignUp = () => {
           <span className='text-blue-500'>Sign In</span>
         </Link>
       </div>
-      {errors.apiError && <p className='text-red-700 mt-5'>{errors.apiError}</p>}
     </div>
   );
 };
