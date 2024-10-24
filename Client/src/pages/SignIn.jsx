@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector  } from 'react-redux'
 import { signInFailure, signInStart, signInSuccess } from '../redux/user/userSlice';
@@ -9,10 +9,17 @@ import OAuth from '../components/OAuth';
 const SignIn = () => {
 
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading, error, currentUser } = useSelector((state) => state.user);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (currentUser !== null) {
+      navigate('/', { replace: true });
+    }
+  }, [currentUser, navigate]);
+
 
   const handleChange = (e) => {
     setFormData({...formData, [e.target.id]: e.target.value})
@@ -29,7 +36,7 @@ const SignIn = () => {
       });
       
       dispatch(signInSuccess(res.data)) 
-      navigate('/');
+      navigate('/', { replace: true });
           
     } catch (error) {
       dispatch(signInFailure(error.response?.data?.message || "Something went wrong!"));
@@ -41,7 +48,7 @@ const SignIn = () => {
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
-      <p className='text-red-700 mt-5 mb-5 text-center'>{error ? error.message || 'Something went wrong!' : '' }</p>
+      <p className='text-red-700 mt-5 mb-5 text-center'>{error ? error : ''}</p>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
         
         <input type="email" placeholder='Email' id='email' 
