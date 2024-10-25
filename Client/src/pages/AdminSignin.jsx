@@ -23,17 +23,17 @@ const AdminSignin = () => {
 
 
     const handleChange = (e) => {
-        setFormData({...adminData, [e.target.id]: e.target.value})
+        setFormData({...formData, [e.target.id]: e.target.value})
     }
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("ADMIN Data:", adminData);
         try {
           const res = await axios.post('/api/admin/signin', formData, {
             "Content-Type": "application/json",
           });
+          console.log(res);
+          
           dispatch(loggedin(res.data))
           setError('');
           navigate('/admin/dashboard', { replace: true });

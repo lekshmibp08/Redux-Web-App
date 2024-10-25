@@ -10,15 +10,15 @@ const adminSlice = createSlice({
   },
   reducers: {
     loggedin: (state, action) => {
-    state.admin = action.payload;
+    state.adminData = action.payload;
     state.isLoggedIn = true;
     },
     loginfailure: (state) => {
-      state.admin = null;
+      state.adminData = null;
       state.isLoggedIn = false;
     },
     loggedOut: (state) => {
-      state.admin = null;
+      state.adminData = null;
       state.isLoggedIn = false;
     },
   },
